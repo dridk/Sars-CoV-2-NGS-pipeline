@@ -3,12 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - devel
       - master 
 
   pull_request:
     braches:
-      - devel
       - master
 
 jobs:
@@ -19,7 +17,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: latest
-          environment-file: etc/environment.yml
+          environment-file: environment.yml
           channels: defaults,conda-forge,bioconda
       - run: |
           freebayes --help
