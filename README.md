@@ -5,7 +5,7 @@ It depends on [bwa](http://bio-bwa.sourceforge.net/), [freebayes](https://github
 
 
 ## Installation 
-You can use conda to install dependency. 
+You can use conda to install dependencies. 
 1. ``git clone https://github.com/dridk/Sars-CoV-2-NGS-pipeline.git``
 2. ``conda env create -f environment.yml``
 3. ``conda activate covid``       
