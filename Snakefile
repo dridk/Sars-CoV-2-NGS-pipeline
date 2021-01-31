@@ -3,6 +3,7 @@ report: "report/workflow.rst"
 
 from glob import glob 
 import re
+import os
 
 
 # Global variable 
@@ -13,7 +14,7 @@ GENOM_NAME="NC_045512.2"
 
 # Get samples names from fastq 
 FASTQ_DIR= config["FASTQ_DIR"]
-SAMPLES = [re.findall(f"{FASTQ_DIR}/([^_]+)_1.fastq", i)[0] for i in glob(f"{FASTQ_DIR}/*_1.fastq.gz")]
+SAMPLES = [re.findall(f"{FASTQ_DIR}/([^_]+)_1.fastq", i)[0] for i in glob(os.path.join(FASTQ_DIR,"/*_1.fastq.gz"))]
 
 
 print(SAMPLES)
@@ -109,6 +110,22 @@ rule single_annotation:
 		"snpEff -Xmx10G -v {GENOM_NAME} {input}> {output} 2> {log}"
 
 
+rule ann_to_csv:
+	input:
+		"{sample}.ann.vcf"
+	output:
+		"{sample}.results.csv"
+	params:
+		qual = config["VCF_QUAL_FILTER"]
+	shell:
+		"""
+		SnpSift filter 'QUAL > {params.qual}' {input} |
+		./scripts/vcfEffOnePerLine.pl|
+		SnpSift extractFields - 'ANN[*].GENE' 'ANN[*].FEATUREID' 'POS' 'REF' 'ALT' 'ANN[*].HGVS_C' 'ANN[*].HGVS_P' 'ANN[*].IMPACT' 'ANN[*].EFFECT' > {output}
+		"""
+
+
+
 rule consensus:
 	input:
 		"{sample}.vcf.gz"
@@ -120,6 +137,7 @@ rule consensus:
 		"{sample}.consensus.log"
 	shell:
 		"bcftools consensus {input} -f {params.genom} --sample {wildcards.sample} > {output} 2> {log}"
+
 
 
 
