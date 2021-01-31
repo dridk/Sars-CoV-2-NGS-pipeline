@@ -1,10 +1,11 @@
 # Sars-CoV-2-NGS-pipeline
 A simple snakemake pipeline to call variant from NGS data of Sars-CoV-2 genome. 
+It depends on [bwa](http://bio-bwa.sourceforge.net/), [freebayes](https://github.com/freebayes/freebayes), [SnpEff/SnpSift](https://pcingola.github.io/SnpEff/) and [samtools](http://www.htslib.org/)
 
 
 
 ## Installation 
-
+You can use conda to install dependency. 
 1. ``git clone https://github.com/dridk/Sars-CoV-2-NGS-pipeline.git``
 2. ``conda env create -f environment.yml``
 3. ``conda activate covid``       
@@ -24,6 +25,13 @@ These files must follow the follwing pattern :
 To get result of a specific SAMPLENAME:
 
     snakemake -p SAMPLENAME.results.csv
+    
+To get fasta genom  of a specific SAMPLENAME:
+
+    snakemake -p SAMPLENAME.fa
+    
+You can pass this consensus sequence  to [Pangolin](https://github.com/cov-lineages/pangolin) to get the lineage. 
+
 
 ## Results 
 
