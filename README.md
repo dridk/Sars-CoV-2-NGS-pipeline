@@ -14,7 +14,7 @@ You can test the pipeline with our toys dataset :
 
 ``snakemake -p A.results.csv B.results.csv  -j4``
 
-## Configuration and execution 
+## Configuration and execution 
 
 From ```config.yml``` set the FASTQ_DIR to the folder containing fastq files. 
 These files must follow the follwing pattern : 
