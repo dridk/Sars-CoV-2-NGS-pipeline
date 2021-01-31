@@ -16,7 +16,7 @@ You can test the pipeline with our toys dataset :
 
 ## Configuration and execution 
 
-From ```config.yml``` set the FASTQ_DIR to the folder containing fastq files. 
+From ```config.yml``` set the **FASTQ_DIR** to the folder containing fastq files. 
 These files must follow the follwing pattern : 
 
 - SAMPLENAME_1.fastq.gz
