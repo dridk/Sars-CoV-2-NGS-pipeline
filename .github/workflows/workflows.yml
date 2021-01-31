@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - devel
+      - master 
+
+  pull_request:
+    braches:
+      - devel
+      - master
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: latest
+          environment-file: etc/environment.yml
+          channels: defaults,conda-forge,bioconda
+      - run: |
+          freebayes --help
