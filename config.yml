@@ -1,3 +1,5 @@
 
 GENOM: data/genome/whuan.fasta
-FASTQ_DIR: data/fastq
+FASTQ_DIR: data/genome/fastq
+
+VCF_QUAL_FILTER: 30

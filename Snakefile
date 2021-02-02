@@ -142,12 +142,10 @@ rule consensus:
 
 
 
-# rule pangolin:
-# 	input:
-# 		"{sample}.fa"
-# 	output:
-# 		"{sample}.lineage_report.csv"
-# 	conda:
-# 		"pangolin"
-# 	shell:
-# 		"pangolin {input} --outfile {output}"
+rule pangolin:
+	input:
+		"{sample}.fa"
+	output:
+		"{sample}.lineage_report.csv"
+	shell:
+		"pangolin {input} --outfile {output}"

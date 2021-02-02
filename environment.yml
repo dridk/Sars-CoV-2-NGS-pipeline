@@ -1,11 +1,9 @@
 name: covid
 channels:
   - bioconda
-  - r
   - defaults
   - conda-forge
 dependencies:
-  - snakemake
   - freebayes
   - samtools
   - snpEff
