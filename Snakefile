@@ -1,4 +1,3 @@
-configfile: "config.yml"
 report: "report/workflow.rst"
 
 from glob import glob 
@@ -7,24 +6,29 @@ import os
 
 
 # Global variable 
-GENOM = config["GENOM"]
-GENOM_BWA_INDEX = GENOM + ".bwt"
-GENOM_FAI_INDEX = GENOM + ".fai"
-GENOM_NAME="NC_045512.2"
+GENOME = config["GENOME"]
+GENOME_BWA_INDEX = GENOME + ".bwt"
+GENOME_FAI_INDEX = GENOME + ".fai"
+GENOME_NAME="NC_045512.2"
 
 # Get samples names from fastq 
 FASTQ_DIR= config["FASTQ_DIR"]
-SAMPLES = [re.findall(f"{FASTQ_DIR}/([^_]+)_1.fastq", i)[0] for i in glob(os.path.join(FASTQ_DIR,"/*_1.fastq.gz"))]
 
+SAMPLES = [re.search(FASTQ_DIR+r"/(.+)_1.fastq.gz",i).group(1) for i in glob(os.path.join(FASTQ_DIR,"*_1.fastq.gz"))]
 
 print(SAMPLES)
 
-rule index_genom:
+rule root:
 	input:
-		GENOM
+		[sample+".bam" for sample in SAMPLES]
+
+
+rule index_genome:
+	input:
+		GENOME
 	output:
-		GENOM_FAI_INDEX,
-		GENOM_BWA_INDEX
+		GENOME_FAI_INDEX,
+		GENOME_BWA_INDEX
 	shell:
 		"bwa index {input}; samtools faidx {input}"
 
@@ -32,16 +36,16 @@ rule align:
 	input:
 		R1=FASTQ_DIR + "/{sample}_1.fastq.gz",
 		R2=FASTQ_DIR + "/{sample}_2.fastq.gz",
-		index=GENOM_BWA_INDEX
+		index=GENOME_BWA_INDEX
 
 	output:
 		temporary("{sample}.sam")
 	log:
 		"{sample}.align.log"
 	params:
-		genom = GENOM
+		genome = GENOME
 	shell:
-		"bwa mem -R '@RG\\tID:{wildcards.sample}\\tSM:{wildcards.sample}' {params.genom} {input.R1} {input.R2} > {output} 2> {log}"
+		"bwa mem -R '@RG\\tID:{wildcards.sample}\\tSM:{wildcards.sample}' {params.genome} {input.R1} {input.R2} > {output} 2> {log}"
 
 
 rule sam2bam:
@@ -63,13 +67,13 @@ rule samIndex:
 
 rule vcf:
 	input:
-		"{sample}.bam", "{sample}.bam.bai", GENOM_FAI_INDEX
+		"{sample}.bam", "{sample}.bam.bai", GENOME_FAI_INDEX
 	output:
 		"{sample}.vcf"
 	params:
-		genom = GENOM
+		genome = GENOME
 	shell:
-		"freebayes -f {GENOM} -p 1 -C10 {input[0]} > {output} "
+		"freebayes -f {GENOME} -p 1 -C10 {input[0]} > {output} "
 
 
 rule bgzip:
@@ -97,7 +101,7 @@ rule merge_annotation:
 	log:
 		"final.snpeff.log"
 	shell:
-		"snpEff -Xmx10G -v {GENOM_NAME} {input}> {output} 2> {log}"
+		"snpEff -Xmx10G -v {GENOME_NAME} {input}> {output} 2> {log}"
 
 rule single_annotation:
 	input:
@@ -107,7 +111,7 @@ rule single_annotation:
 	log:
 		"{sample}.snpeff.log"
 	shell:
-		"snpEff -Xmx10G -v {GENOM_NAME} {input}> {output} 2> {log}"
+		"snpEff -Xmx10G -v {GENOME_NAME} {input}> {output} 2> {log}"
 
 
 rule ann_to_csv:
@@ -132,11 +136,11 @@ rule consensus:
 	output:
 		report("{sample}.fa",caption="report/sample.rst",category="sample")
 	params:
-		genom = GENOM
+		genome = GENOME
 	log:
 		"{sample}.consensus.log"
 	shell:
-		"bcftools consensus {input} -f {params.genom} --sample {wildcards.sample} > {output} 2> {log}"
+		"bcftools consensus {input} -f {params.genome} --sample {wildcards.sample} > {output} 2> {log}"
 
 
 
