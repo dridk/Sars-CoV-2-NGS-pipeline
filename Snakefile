@@ -20,7 +20,7 @@ print(SAMPLES)
 
 rule root:
 	input:
-		[sample+".result.csv" for sample in SAMPLES]
+		[sample+".results.csv" for sample in SAMPLES],
 		[sample+".lineage_report.csv" for sample in SAMPLES]
 
 
