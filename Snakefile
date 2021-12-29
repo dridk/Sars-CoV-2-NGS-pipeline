@@ -20,7 +20,8 @@ print(SAMPLES)
 
 rule root:
 	input:
-		[sample+".bam" for sample in SAMPLES]
+		[sample+".result.csv" for sample in SAMPLES]
+		[sample+".lineage_report.csv" for sample in SAMPLES]
 
 
 rule index_genome:
