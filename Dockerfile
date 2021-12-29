@@ -22,7 +22,7 @@ ADD data/genome /genome/
 
 WORKDIR /usr/app/Sars-CoV-2-NGS-pipeline
 
-RUN conda install bwa freebayes samtools snpEff
+RUN conda install bwa freebayes samtools snpEff bcftools tabix
 
 RUN python -m pip install snakemake
 
