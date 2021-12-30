@@ -20,7 +20,7 @@ print(SAMPLES)
 
 rule root:
 	input:
-		[sample+".results.csv" for sample in SAMPLES],
+		[sample+".ann.vcf" for sample in SAMPLES],
 		[sample+".lineage_report.csv" for sample in SAMPLES]
 
 
@@ -113,21 +113,6 @@ rule single_annotation:
 		"{sample}.snpeff.log"
 	shell:
 		"snpEff -Xmx10G -v {GENOME_NAME} {input}> {output} 2> {log}"
-
-
-rule ann_to_csv:
-	input:
-		"{sample}.ann.vcf"
-	output:
-		"{sample}.results.csv"
-	params:
-		qual = config["VCF_QUAL_FILTER"]
-	shell:
-		"""
-		SnpSift filter 'QUAL > {params.qual}' {input} |
-		./scripts/vcfEffOnePerLine.pl|
-		SnpSift extractFields - 'ANN[*].GENE' 'ANN[*].FEATUREID' 'POS' 'REF' 'ALT' 'ANN[*].HGVS_C' 'ANN[*].HGVS_P' 'ANN[*].IMPACT' 'ANN[*].EFFECT' > {output}
-		"""
 
 
 
